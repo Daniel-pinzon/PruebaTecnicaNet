@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TravelRequest.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using TravelRequest.Infrastructure.Persistence;
 namespace TravelRequest.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250806040302_CrearTablaCodigos")]
+    partial class CrearTablaCodigos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,12 +46,7 @@ namespace TravelRequest.Infrastructure.Migrations
                     b.Property<DateTime>("FechaInicio")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId");
 
                     b.ToTable("Codigos");
                 });
@@ -126,17 +124,6 @@ namespace TravelRequest.Infrastructure.Migrations
                     b.ToTable("Usuarios");
                 });
 
-            modelBuilder.Entity("TravelRequest.Domain.Entities.Codigos", b =>
-                {
-                    b.HasOne("TravelRequest.Domain.Entities.Usuario", "Usuario")
-                        .WithMany("Codigos")
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Usuario");
-                });
-
             modelBuilder.Entity("TravelRequest.Domain.Entities.SolicitudViaje", b =>
                 {
                     b.HasOne("TravelRequest.Domain.Entities.Usuario", null)
@@ -146,8 +133,6 @@ namespace TravelRequest.Infrastructure.Migrations
 
             modelBuilder.Entity("TravelRequest.Domain.Entities.Usuario", b =>
                 {
-                    b.Navigation("Codigos");
-
                     b.Navigation("Solicitudes");
                 });
 #pragma warning restore 612, 618

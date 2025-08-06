@@ -12,6 +12,7 @@ namespace TravelRequest.Domain.Entities
         public required string Rol { get; set; }
 
         public ICollection<SolicitudViaje> Solicitudes { get; set; } = new List<SolicitudViaje>();
+        public ICollection<Codigos> Codigos { get; set; } = new List<Codigos>();
     }
 
 }

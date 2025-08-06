@@ -24,8 +24,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // 🔧 Inyección de dependencias
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IcodigoRepository, CodigoRepository>();
 builder.Services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
+
 builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddScoped<CodigoService>();
 
 // Validación
 builder.Services.AddFluentValidationAutoValidation();
@@ -53,6 +56,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddScoped<JwtTokenGenerator>();
+builder.Services.AddScoped<GenerarCodigoService>();
 
 var app = builder.Build();
 

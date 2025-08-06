@@ -12,13 +12,17 @@ namespace TravelRequest.Api.Controllers
     public class UsuarioController : ControllerBase
     {
         private readonly UsuarioService _usuarioService;
-        private readonly JwtTokenGenerator _jwtGenerator; // <- Aquí necesitas un generador de tokens JWT
+        private readonly JwtTokenGenerator _jwtGenerator; 
+        private readonly GenerarCodigoService _generarCodigoService; 
+        private readonly CodigoService _codigoService;
         private readonly ILogger<UsuarioController> _logger;
 
-        public UsuarioController(UsuarioService usuarioService, ILogger<UsuarioController> logger, JwtTokenGenerator jwtTokenGenerator)
+        public UsuarioController(UsuarioService usuarioService, ILogger<UsuarioController> logger, JwtTokenGenerator jwtTokenGenerator,GenerarCodigoService generarCodigoService,CodigoService codigoService)
         {
             _usuarioService = usuarioService;
             _jwtGenerator = jwtTokenGenerator;
+            _generarCodigoService = generarCodigoService;
+            _codigoService = codigoService;
             _logger = logger;
         }
 
@@ -48,8 +52,73 @@ namespace TravelRequest.Api.Controllers
             return Ok(new { token });
         }
 
+        [HttpPost("solicitar-codigo")]
+        public async Task<IActionResult> SolicitarCodigo([FromBody] CorreoDto dto)
+        {
+            try
+            {
+                var usuario = await _usuarioService.ValidarCorreo(dto.correo);
+                if (usuario == null)
+                {
+                    return NotFound("Usuario no encontrado");
+                }
+
+                var codigoGenerado = _generarCodigoService.GenerarCodigo();
+                //var num = "123";
+                await _codigoService.CrearCodigo(new CodigoCreateDto
+                {
+                    Codigo = codigoGenerado,
+                    UsuarioId = usuario.Id,
+                    FechaInicio = DateTime.UtcNow,
+                    FechaFin = DateTime.UtcNow.AddMinutes(5),
+                    Estado = true
+                });
+
+                return Ok(new
+                {
+                    message = "Código solicitado correctamente",
+                    codigo = codigoGenerado // una variable, por ejemplo
+                });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al solicitar el código");
+                return StatusCode(500, "Ocurrió un error al solicitar el código");
+            }
+        }
+
+        [HttpPost("cambiar-password")]
+        public async Task<IActionResult> CambiarPassword([FromBody] CambarPasswordDto dto)
+        {
+            try
+            {
+                var codigoValido = await _codigoService.ValidarCodigo(dto.codigo);
+                if (codigoValido == null)
+                {
+                    return BadRequest("Código no encontrado o inactivo");
+                }
+                if (dto.password != dto.confirm_password)
+                {
+                    return BadRequest("Las contraseñas no coinciden");
+                }
+                await _usuarioService.CambiarPasswordAsync(codigoValido.Id, dto.password);
+                await _codigoService.ActualizarCodigo(new CodigoCreateDto
+                {
+                    Codigo=codigoValido.Codigo,
+                    Estado=false
+                });
+                return Ok(new { message = "Contraseña cambiada correctamente" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al cambiar la contraseña");
+                return StatusCode(500, "Ocurrió un error al cambiar la contraseña");
+            }
+        }
+
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "Aprobador")]
         public async Task<IActionResult> ObtenerUsuarios()
         {
             var usuarios = await _usuarioService.ObtenerUsuariosAsync();
