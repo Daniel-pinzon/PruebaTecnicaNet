@@ -26,6 +26,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IcodigoRepository, CodigoRepository>();
 builder.Services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
+builder.Services.AddScoped<ISolicitudViajeRepository, SolicitudViajeRepository>();
+
 
 builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<CodigoService>();
@@ -57,6 +59,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<JwtTokenGenerator>();
 builder.Services.AddScoped<GenerarCodigoService>();
+builder.Services.AddScoped<SolicitudViajeService>();
+
 
 var app = builder.Build();
 
