@@ -45,5 +45,16 @@ namespace TravelRequest.Application.Services
                 Rol = u.Rol
             });
         }
+
+        public async Task<Usuario?> ValidarCredencialesAsync(string correo, string password)
+        {
+            var usuario = await _usuarioRepository.ObtenerPorCorreoAsync(correo);
+            if (usuario == null)
+                return null;
+
+            bool valido = _passwordHasher.VerifyHashedPassword(usuario.password, password);
+            return valido ? usuario : null;
+        }
+
     }
 }

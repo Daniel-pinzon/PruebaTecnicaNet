@@ -6,8 +6,11 @@ namespace TravelRequest.Domain.Interfaces
     {
         Task<IEnumerable<Usuario>> ObtenerTodosAsync();
         Task<Usuario?> ObtenerPorIdAsync(int id);
+        Task<Usuario?> ObtenerPorCorreoAsync(string correo);
         Task CrearAsync(Usuario usuario);
         Task ActualizarAsync(Usuario usuario);
         Task EliminarAsync(int id);
+        
+
     }
 }
