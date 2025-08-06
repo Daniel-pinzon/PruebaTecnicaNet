@@ -10,6 +10,8 @@ namespace TravelRequest.Domain.Entities
         public DateTime fecha_ida { get; set; }
         public DateTime fecha_regreso { get; set; }
         public required string justificacion { get; set; }
-        public required string estado { get; set; } 
+        public required string estado { get; set; }
+        public int UsuarioId { get; set; }
+        public Usuario Usuario { get; set; } = null!;
     }
 }
