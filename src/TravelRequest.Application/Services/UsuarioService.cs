@@ -45,5 +45,37 @@ namespace TravelRequest.Application.Services
                 Rol = u.Rol
             });
         }
+
+        public async Task<Usuario?> ValidarCredencialesAsync(string correo, string password)
+        {
+            var usuario = await _usuarioRepository.ObtenerPorCorreoAsync(correo);
+            if (usuario == null)
+                return null;
+
+            bool valido = _passwordHasher.VerifyHashedPassword(usuario.password, password);
+            return valido ? usuario : null;
+        }
+
+        public async Task<Usuario?> ValidarCorreo(string correo)
+        {
+            var usuario = await _usuarioRepository.ObtenerPorCorreoAsync(correo);
+            if (usuario == null)
+                return null;
+
+            return usuario;
+        }
+
+        public async Task<Usuario?> CambiarPasswordAsync(int id,string password)
+        {
+            var usuario = await _usuarioRepository.ObtenerPorIdAsync(id);
+            if(usuario == null)
+            {
+                return null;
+            }
+            var hash = _passwordHasher.HashPassword(password);
+            usuario.password = hash;
+            await _usuarioRepository.ActualizarAsync(usuario);
+            return usuario;
+        }
     }
 }

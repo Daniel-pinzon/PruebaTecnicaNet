@@ -23,7 +23,10 @@ namespace TravelRequest.Infrastructure.Repositories
         {
             return await _context.Usuarios.FindAsync(id);
         }
-
+        public async Task<Usuario?> ObtenerPorCorreoAsync(string correo)
+        {
+            return await _context.Usuarios.FirstOrDefaultAsync(u => u.correo == correo);
+        }
         public async Task CrearAsync(Usuario usuario)
         {
             _context.Usuarios.Add(usuario);

@@ -11,5 +11,6 @@ namespace TravelRequest.Infrastructure.Persistence
         }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<SolicitudViaje> SolicitudesViaje { get; set; }
+        public DbSet<Codigos> Codigos { get; set; }
     }
 }
