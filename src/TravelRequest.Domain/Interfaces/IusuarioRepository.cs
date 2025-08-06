@@ -1,0 +1,13 @@
+﻿using TravelRequest.Domain.Entities;
+
+namespace TravelRequest.Domain.Interfaces
+{
+    public interface IUsuarioRepository
+    {
+        Task<IEnumerable<Usuario>> ObtenerTodosAsync();
+        Task<Usuario?> ObtenerPorIdAsync(int id);
+        Task CrearAsync(Usuario usuario);
+        Task ActualizarAsync(Usuario usuario);
+        Task EliminarAsync(int id);
+    }
+}
